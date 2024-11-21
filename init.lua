@@ -94,8 +94,8 @@ vim.keymap.set('n', '<Down>', '<C-w><C-j>', { desc = 'Move focus to the right wi
 vim.keymap.set('n', '<Left>', '<C-w><C-h>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<Right>', '<C-w><C-l>', { desc = 'Move focus to the upper window' })
 
-vim.keymap.set('n', '<C-k>', ':resize +5<CR>')
-vim.keymap.set('n', '<C-j>', ':resize -5<CR>')
+vim.keymap.set('n', '<C-k>', ':resize -5<CR>')
+vim.keymap.set('n', '<C-j>', ':resize +5<CR>')
 vim.keymap.set('n', '<C-h>', ':vertical resize +5<CR>')
 vim.keymap.set('n', '<C-l>', ':vertical resize -5<CR>')
 
@@ -218,6 +218,7 @@ require('lazy').setup({
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
+        { '<leader>i', group = '[I]nteractive' },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -704,7 +705,7 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
+  --[[ { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
     --
@@ -720,15 +721,24 @@ require('lazy').setup({
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
     end,
-  },
+  }, ]]
   --[[ {
     'rose-pine/neovim',
     name = 'rose-pine',
     priority = 1000,
     init = function()
-      vim.cmd.colorscheme 'rose-pine-dawn'
+      vim.cmd.colorscheme 'rose-pine'
     end,
   }, ]]
+  {
+    'neanias/everforest-nvim',
+    version = false,
+    lazy = false,
+    priority = 1000, -- make sure to load this before all the other start plugins
+    init = function()
+      vim.cmd.colorscheme 'everforest'
+    end,
+  },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -827,7 +837,75 @@ require('lazy').setup({
       require('toggleterm').setup {}
     end,
   },
+  {
+    'Vigemus/iron.nvim',
+    config = function()
+      local iron = require 'iron.core'
 
+      iron.setup {
+        config = {
+          -- Whether a repl should be discarded or not
+          scratch_repl = true,
+          -- Your repl definitions come here
+          repl_definition = {
+            sh = {
+              -- Can be a table or a function that
+              -- returns a table (see below)
+              command = { 'zsh' },
+            },
+            python = {
+              command = function()
+                if string.find(vim.fn.getcwd(), os.getenv 'CLOSE_HOME') then
+                  return {
+                    'docker',
+                    'compose',
+                    '-f',
+                    os.getenv 'CLOSE_HOME' .. '/devtools/docker-compose.yaml',
+                    'exec',
+                    '-it',
+                    'closeio_api',
+                    './manage.py',
+                    'shell',
+                  }
+                else
+                  return { 'ipython', '--no-autoindent' }
+                end
+              end,
+              format = require('iron.fts.common').bracketed_paste_python,
+            },
+          },
+          -- How the repl window will be displayed
+          -- See below for more information
+          repl_open_cmd = require('iron.view').split.horizontal.botright '30%',
+          --repl_open_cmd = 'vertical botright 80 split',
+        },
+        -- Iron doesn't set keymaps by default anymore.
+        -- You can set them here or manually add keymaps to the functions in iron.core
+        keymaps = {
+          send_motion = '<space>ic',
+          visual_send = '<space>ic',
+          send_file = '<space>if',
+          send_line = '<space>il',
+          send_paragraph = '<space>ip',
+          send_until_cursor = '<space>iu',
+          send_mark = '<space>im',
+          mark_motion = '<space>ic',
+          mark_visual = '<space>ic',
+          remove_mark = '<space>id',
+          cr = '<space>i<cr>',
+          interrupt = '<space>i<space>',
+          exit = '<space>iq',
+          clear = '<space>iil',
+        },
+        -- If the highlight is on, you can change how it looks
+        -- For the available options, check nvim_set_hl
+        highlight = {
+          italic = true,
+        },
+        ignore_blank_lines = true, -- ignore blank lines when sending visual select lines
+      }
+    end,
+  },
   {
     'mikavilpas/yazi.nvim',
     event = 'VeryLazy',
@@ -855,7 +933,6 @@ require('lazy').setup({
       open_for_directories = false,
     },
   },
-
   {
     'chentoast/marks.nvim',
     config = function()
