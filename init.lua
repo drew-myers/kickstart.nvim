@@ -856,7 +856,9 @@ require('lazy').setup({
             },
             python = {
               command = function()
-                if string.find(vim.fn.getcwd(), os.getenv 'CLOSE_HOME') then
+                -- If on work laptop, and in work directory then run the close shell
+                local close_home = os.getenv 'CLOSE_HOME'
+                if close_home and string.find(vim.fn.getcwd(), close_home) then
                   return {
                     'docker',
                     'compose',
