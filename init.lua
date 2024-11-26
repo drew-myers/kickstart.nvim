@@ -215,7 +215,7 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
-        { '<leader>d', group = '[D]ocument' },
+        { '<leader>d', group = '[D]ebug' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>i', group = '[I]nteractive' },
@@ -401,7 +401,7 @@ require('lazy').setup({
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          map('<leader>gS', require('telescope.builtin').lsp_document_symbols, '[G]oto Document [S]ymbols')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
@@ -874,7 +874,7 @@ require('lazy').setup({
                   return { 'ipython', '--no-autoindent' }
                 end
               end,
-              format = require('iron.fts.common').bracketed_paste_python,
+              --format = require('iron.fts.common').bracketed_paste_python,
             },
           },
           -- How the repl window will be displayed
@@ -935,6 +935,44 @@ require('lazy').setup({
       -- if you want to open yazi instead of netrw, see below for more info
       open_for_directories = false,
     },
+  },
+  {
+    'mfussenegger/nvim-dap-python',
+    event = 'VeryLazy',
+    dependencies = {
+      'mfussenegger/nvim-dap',
+    },
+    config = function()
+      vim.keymap.set('n', '<leader>dc', function()
+        require('dap').continue()
+      end, { desc = '[d]ebug [c]ontinue' })
+
+      vim.keymap.set('n', '<leader>do', function()
+        require('dap').step_over()
+      end, { desc = '[d]ebug step [o]ver' })
+
+      vim.keymap.set('n', '<leader>di', function()
+        require('dap').step_into()
+      end, { desc = '[d]ebug step [i]nto' })
+
+      vim.keymap.set('n', '<leader>dO', function()
+        require('dap').step_out()
+      end, { desc = '[d]ebug step [O]ut' })
+
+      vim.keymap.set('n', '<leader>db', function()
+        require('dap').toggle_breakpoint()
+      end, { desc = '[d]ebug set [b]reakpoint' })
+
+      vim.keymap.set('n', '<leader>dr', function()
+        require('dap').repl.open()
+      end, { desc = '[d]ebug open [r]epl' })
+
+      vim.keymap.set('n', '<leader>df', function()
+        require('dap-python').test_method()
+      end, { desc = '[d]ebug [f]unction' })
+
+      require('dap-python').setup 'python'
+    end,
   },
   {
     'chentoast/marks.nvim',
