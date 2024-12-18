@@ -837,6 +837,7 @@ require('lazy').setup({
       require('toggleterm').setup {}
     end,
   },
+
   {
     'geg2102/nvim-python-repl',
     dependencies = 'nvim-treesitter',
@@ -982,11 +983,14 @@ require('lazy').setup({
       open_for_directories = false,
     },
   },
+
   {
-    'mfussenegger/nvim-dap-python',
+    'rcarriga/nvim-dap-ui',
     event = 'VeryLazy',
     dependencies = {
       'mfussenegger/nvim-dap',
+      'mfussenegger/nvim-dap-python',
+      'nvim-neotest/nvim-nio',
     },
     config = function()
       vim.keymap.set('n', '<leader>dc', function()
@@ -1017,9 +1021,15 @@ require('lazy').setup({
         require('dap-python').test_method()
       end, { desc = '[d]ebug [f]unction' })
 
+      vim.keymap.set('n', '<leader>du', function()
+        require('dapui').toggle()
+      end, { desc = '[d]ebug [U]I' })
+
       require('dap-python').setup 'python'
+      require('dapui').setup()
     end,
   },
+
   {
     'toppair/peek.nvim',
     event = { 'VeryLazy' },
@@ -1030,6 +1040,7 @@ require('lazy').setup({
       vim.api.nvim_create_user_command('PeekClose', require('peek').close, {})
     end,
   },
+
   {
     'chentoast/marks.nvim',
     config = function()
