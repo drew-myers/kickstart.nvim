@@ -85,10 +85,6 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- Make it easy to bail out terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<Up>', '<C-w><C-k>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<Down>', '<C-w><C-j>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<Left>', '<C-w><C-h>', { desc = 'Move focus to the lower window' })
@@ -759,7 +755,18 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      --require('mini.surround').setup()
+      require('mini.surround').setup {
+        mappings = {
+          add = 'Sa',
+          delete = 'Sd',
+          find = 'Sf',
+          find_left = 'SF',
+          highlight = 'Sh',
+          replace = 'Sr',
+          update_n_lines = 'Sn',
+        },
+      }
+      vim.keymap.set('n', 'S', '<Nop>')
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -825,7 +832,8 @@ require('lazy').setup({
   {
     'ggandor/leap.nvim',
     config = function()
-      require('leap').create_default_mappings()
+      require 'leap'
+      vim.keymap.set('n', 's', '<Plug>(leap)')
     end,
   },
 
@@ -834,6 +842,7 @@ require('lazy').setup({
     version = '*',
     config = function()
       vim.keymap.set('n', '<leader>T', ':Neotree toggle<CR>', { desc = 'Toggle Neo[T]ree' })
+      vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>', { desc = 'Toggle terminal' })
       require('toggleterm').setup {}
     end,
   },
@@ -1057,12 +1066,10 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
-  vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>', { desc = 'Toggle terminal' }),
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
