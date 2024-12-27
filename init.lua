@@ -11,6 +11,15 @@ vim.g.have_nerd_font = true
 -- Enable 24 bit colors
 vim.opt.termguicolors = true
 
+-- Treesitter defines folds
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+-- All folds expanded by default
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
+-- Max fold depth
+vim.opt.foldnestmax = 4
+
 -- Allow termina to run in background
 vim.opt.hidden = true
 
